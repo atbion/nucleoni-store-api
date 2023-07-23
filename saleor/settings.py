@@ -27,6 +27,7 @@ from sentry_sdk.integrations.logging import ignore_logger
 from . import PatchedSubscriberExecutionContext, __version__
 from .core.languages import LANGUAGES as CORE_LANGUAGES
 from .core.schedules import initiated_sale_webhook_schedule
+from .security import SecurityService
 
 django_stubs_ext.monkeypatch()
 
@@ -88,18 +89,35 @@ DATABASE_CONNECTION_DEFAULT_NAME = "default"
 # This variable should be set to `replica`
 DATABASE_CONNECTION_REPLICA_NAME = "replica"
 
+# DATABASES = {
+#     DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
+#         default="postgres://saleor:saleor@localhost:5432/saleor",
+#         conn_max_age=DB_CONN_MAX_AGE,
+#     ),
+#     DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
+#         default="postgres://saleor:saleor@localhost:5432/saleor",
+#         # TODO: We need to add read only user to saleor platform,
+#         # and we need to update docs.
+#         # default="postgres://saleor_read_only:saleor@localhost:5432/saleor",
+#         conn_max_age=DB_CONN_MAX_AGE,
+#     ),
+# }
+
+stage = os.environ.get("STAGE", "dev")
+
 DATABASES = {
-    DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
-        default="postgres://saleor:saleor@localhost:5432/saleor",
-        conn_max_age=DB_CONN_MAX_AGE,
-    ),
-    DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
-        default="postgres://saleor:saleor@localhost:5432/saleor",
-        # TODO: We need to add read only user to saleor platform,
-        # and we need to update docs.
-        # default="postgres://saleor_read_only:saleor@localhost:5432/saleor",
-        conn_max_age=DB_CONN_MAX_AGE,
-    ),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": f"nucleoni-store-api-{stage}",
+        "USER": "nucleoni",
+        "PASSWORD": SecurityService.decrypt_ssm_parameter(
+            parameter_encrypted=os.environ.get("AURORA_PASSWORD_SSM_PARAMETER")
+        )
+        if os.environ.get("AURORA_PASSWORD_SSM_PARAMETER")
+        else "",
+        "HOST": os.environ.get("AURORA_ENDPOINT"),
+        "PORT": "5432",
+    }
 }
 
 DATABASE_ROUTERS = ["saleor.core.db_routers.PrimaryReplicaRouter"]

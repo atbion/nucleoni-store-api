@@ -1,0 +1,38 @@
+### Build and install packages
+FROM amazon/aws-lambda-python:3.9
+
+RUN yum update -y
+RUN yum groupinstall -y "Development Tools"
+
+RUN yum install -y \
+  wget\
+  tar\
+  gettext\
+  libcairo2 \
+  libgdk-pixbuf2.0-0 \
+  liblcms2-2 \
+  libopenjp2-7 \
+  libpango-1.0-0 \
+  libpangocairo-1.0-0 \
+  pango \
+  libssl1.1 \
+  libtiff5 \
+  libwebp6 \
+  libxml2 \
+  libpq5 \
+  shared-mime-info \
+  mime-support \
+
+RUN echo 'image/webp webp' >> /etc/mime.types
+RUN echo 'image/avif avif' >> /etc/mime.types
+
+# Copy files from local
+COPY . ${LAMBDA_TASK_ROOT}
+
+# Install Python dependencies
+WORKDIR ${LAMBDA_TASK_ROOT}
+RUN pip install -r requirements_dev.txt
+
+ENV PYTHONUNBUFFERED 1
+
+CMD ["nucleoni.handler"]
