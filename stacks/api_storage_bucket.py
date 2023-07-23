@@ -69,7 +69,7 @@ class ApiStorageBucketStack(Stack):
             bucket_name=nucleoni_storage_bucket_name,
             removal_policy=RemovalPolicy.RETAIN,
             auto_delete_objects=False,
-            public_read_access=True,
+            #public_read_access=True,
             access_control=aws_s3.BucketAccessControl.PUBLIC_READ,
             block_public_access=aws_s3.BlockPublicAccess(
                 block_public_acls=False,
