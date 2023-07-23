@@ -16,6 +16,7 @@ env:
   AWS_MEDIA_CUSTOM_DOMAIN: "dev.nucleoni-store-api-assets.nucleoni.com"
   AWS_STATIC_CUSTOM_DOMAIN: "dev.nucleoni-store-api-assets.nucleoni.com"
   AWS_STORAGE_BUCKET_NAME: "dev.nucleoni-store-api-assets.nucleoni.com"
+  AURORA_PASSWORD_SSM_PARAMETER: "/infra/rds_password/dev"
 
 jobs:
   deploy:
