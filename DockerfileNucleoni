@@ -21,7 +21,7 @@ RUN yum install -y \
   libxml2 \
   libpq5 \
   shared-mime-info \
-  mime-support \
+  mime-support
 
 RUN echo 'image/webp webp' >> /etc/mime.types
 RUN echo 'image/avif avif' >> /etc/mime.types

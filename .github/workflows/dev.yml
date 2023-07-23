@@ -41,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: npm install -g aws-cdk
       - name: Install required packages
-        run: pip install -r requirements_cdk.txt
+        run: pip install -r requirements_dev.txt
       - name: Bootstrap stack
         run: cdk bootstrap
       - name: Synth stack
