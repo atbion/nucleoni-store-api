@@ -11,6 +11,7 @@ import dj_email_url
 import django_cache_url
 import django_stubs_ext
 import jaeger_client.config
+import boto3
 import pkg_resources
 import sentry_sdk
 import sentry_sdk.utils
@@ -27,7 +28,8 @@ from sentry_sdk.integrations.logging import ignore_logger
 from . import PatchedSubscriberExecutionContext, __version__
 from .core.languages import LANGUAGES as CORE_LANGUAGES
 from .core.schedules import initiated_sale_webhook_schedule
-from .security import SecurityService
+from pymemcache.client.hash import HashClient
+
 
 django_stubs_ext.monkeypatch()
 
@@ -89,35 +91,40 @@ DATABASE_CONNECTION_DEFAULT_NAME = "default"
 # This variable should be set to `replica`
 DATABASE_CONNECTION_REPLICA_NAME = "replica"
 
-# DATABASES = {
-#     DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
-#         default="postgres://saleor:saleor@localhost:5432/saleor",
-#         conn_max_age=DB_CONN_MAX_AGE,
-#     ),
-#     DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
-#         default="postgres://saleor:saleor@localhost:5432/saleor",
-#         # TODO: We need to add read only user to saleor platform,
-#         # and we need to update docs.
-#         # default="postgres://saleor_read_only:saleor@localhost:5432/saleor",
-#         conn_max_age=DB_CONN_MAX_AGE,
-#     ),
-# }
 
-stage = os.environ.get("STAGE", "dev")
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": f"nucleoni-store-api-{stage}",
-        "USER": "nucleoni",
-        "PASSWORD": SecurityService.decrypt_ssm_parameter(
-            parameter_encrypted=os.environ.get("AURORA_PASSWORD_SSM_PARAMETER")
+def decrypt_ssm_parameter(parameter_encrypted: str, region: str = "eu-west-1"):
+    client = HashClient(
+        [
+            os.environ.get("MEMCACHED_ENDPOINT"),
+        ]
+    )
+    result = client.get(parameter_encrypted)
+    if not result:
+        session = boto3.Session()
+        ssm_client = session.client("ssm", region_name=region)
+        response = ssm_client.get_parameter(
+            Name=parameter_encrypted, WithDecryption=True
         )
-        if os.environ.get("AURORA_PASSWORD_SSM_PARAMETER")
-        else "",
-        "HOST": os.environ.get("AURORA_ENDPOINT"),
-        "PORT": "5432",
-    }
+        value = response["Parameter"]["Value"]
+        client.set(parameter_encrypted, value)
+        return value
+    return result.decode("utf-8")
+
+
+password = decrypt_ssm_parameter(
+    parameter_encrypted=os.environ.get("AURORA_PASSWORD_SSM_PARAMETER")
+)
+stage = os.environ.get("STAGE", None)
+host = os.environ.get("AURORA_ENDPOINT")
+DATABASES = {
+    DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
+        default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-api-{stage}",
+        conn_max_age=DB_CONN_MAX_AGE,
+    ),
+    DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
+        default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-api-{stage}",
+        conn_max_age=DB_CONN_MAX_AGE,
+    ),
 }
 
 DATABASE_ROUTERS = ["saleor.core.db_routers.PrimaryReplicaRouter"]
@@ -226,7 +233,6 @@ JWT_MANAGER_PATH = os.environ.get(
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "saleor.core.middleware.google_analytics",
     "saleor.core.middleware.jwt_refresh_token_middleware",
 ]
 
@@ -270,12 +276,11 @@ INSTALLED_APPS = [
     # External apps
     "django_measurement",
     "django_prices",
-    "django_prices_openexchangerates",
-    "django_prices_vatlayer",
     "mptt",
     "django_countries",
     "django_filters",
     "phonenumber_field",
+    "django_prices_vatlayer"
 ]
 
 ENABLE_DJANGO_EXTENSIONS = get_bool_from_env("ENABLE_DJANGO_EXTENSIONS", False)
@@ -426,10 +431,6 @@ DEFAULT_CURRENCY_CODE_LENGTH = 3
 DEFAULT_MAX_EMAIL_DISPLAY_NAME_LENGTH = 78
 
 COUNTRIES_OVERRIDE = {"EU": "European Union"}
-
-OPENEXCHANGERATES_API_KEY = os.environ.get("OPENEXCHANGERATES_API_KEY")
-
-GOOGLE_ANALYTICS_TRACKING_ID = os.environ.get("GOOGLE_ANALYTICS_TRACKING_ID")
 
 
 def get_host():
@@ -620,6 +621,11 @@ CELERY_BEAT_SCHEDULE = {
     },
     "update-products-search-vectors": {
         "task": "saleor.product.tasks.update_products_search_vector_task",
+        "schedule": timedelta(seconds=20),
+        "options": {"expires": BEAT_UPDATE_SEARCH_EXPIRE_AFTER_SEC},
+    },
+    "update-gift-cards-search-vectors": {
+        "task": "saleor.giftcard.tasks.update_gift_cards_search_vector_task",
         "schedule": timedelta(seconds=20),
         "options": {"expires": BEAT_UPDATE_SEARCH_EXPIRE_AFTER_SEC},
     },
@@ -840,6 +846,11 @@ WEBHOOK_CELERY_QUEUE_NAME = os.environ.get("WEBHOOK_CELERY_QUEUE_NAME", None)
 # Lock time for request password reset mutation per user (seconds)
 RESET_PASSWORD_LOCK_TIME = parse(
     os.environ.get("RESET_PASSWORD_LOCK_TIME", "15 minutes")
+)
+
+# Lock time for request confirmation email mutation per user
+CONFIRMATION_EMAIL_LOCK_TIME = parse(
+    os.environ.get("CONFIRMATION_EMAIL_LOCK_TIME", "15 minutes")
 )
 
 # Time threshold to update user last_login when performing requests with OAUTH token.

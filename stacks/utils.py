@@ -26,12 +26,8 @@ class UtilsService:
             "STAGE": stage,
             "DEPLOYMENT_REGION": region,
             "NUCLEONI_STORE_API_STORAGE_BUCKET_NAME": nucleoni_store_api_storage_bucket,
-            "STORAGE_USE_S3": "TRUE",
             "DJANGO_DEBUG": "FALSE" if is_production else "TRUE",
-            "STRIPE_SECRET_KEY_SSM_PARAMETER": f"/infra/stripe/secret-key/{stage}",
-            "STRIPE_WEB_HOOKS_SECRET_SSM_PARAMETER": f"/infra/stripe/secret-web-hooks-secret/{stage}",
             "AURORA_PASSWORD_SSM_PARAMETER": f"/infra/rds_password/{stage}",
-            "NUCLEONI_ROOT_PASSWORD_SSM_PARAMETER": f"/infra/nucleoni-root/password/{stage}",
             "AURORA_ENDPOINT": aurora_endpoint,
             "MEMCACHED_ENDPOINT": memcached_endpoint,
         }
