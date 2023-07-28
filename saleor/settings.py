@@ -120,9 +120,9 @@ password = decrypt_ssm_parameter(
 stage = os.environ.get("STAGE", "dev")
 host = os.environ.get("AURORA_ENDPOINT")
 
-print(f"******* HOST *******: {host}")
-print(f"******* STAGE *******: {stage}")
-print(f"******* PASS *******: {len(password)}")
+print(f"******* HOST ******: {host}")
+print(f"******* STAGE ******: {stage}")
+print(f"******* PASS ******: {len(password)}")
 
 
 DATABASES = {
