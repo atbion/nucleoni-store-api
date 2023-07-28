@@ -86,7 +86,7 @@ class ApiGatewayStack(Stack):
             timeout=Duration.seconds(30),
             vpc_subnets=aws_ec2.SubnetSelection(subnets=self.vpc.private_subnets),
             environment=lambda_env,
-            memory_size=256,
+            memory_size=1024,
         )
         self.nucleoni_store_api_gateway_lambda_handler.role.attach_inline_policy(
             aws_iam.Policy(
