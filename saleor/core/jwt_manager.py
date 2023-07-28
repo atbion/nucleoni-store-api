@@ -96,7 +96,7 @@ class JWTManager(JWTManagerBase):
 
     @classmethod
     def _load_debug_private_key(cls) -> rsa.RSAPrivateKey:
-        key_path = join(settings.PROJECT_ROOT, cls.KEY_FILE_FOR_DEBUG)
+        key_path = join(settings.RSA_PRIVATE_KEY_ROOT, cls.KEY_FILE_FOR_DEBUG)
         if exists(key_path):
             return cls._load_local_private_key(key_path)
 

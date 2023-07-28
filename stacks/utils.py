@@ -31,6 +31,7 @@ class UtilsService:
             "MEMCACHED_ENDPOINT": memcached_endpoint,
             "DEBUG": "False" if is_production else "True",
             "ENABLE_DEBUG_TOOLBAR": "False" if is_production else "True",
+            "RSA_PRIVATE_KEY_ROOT": "/tmp/public/media",
         }
 
     @staticmethod
