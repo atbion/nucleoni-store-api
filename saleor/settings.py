@@ -117,8 +117,14 @@ def decrypt_ssm_parameter(parameter_encrypted: str, region: str = "eu-west-1"):
 password = decrypt_ssm_parameter(
     parameter_encrypted=os.environ.get("AURORA_PASSWORD_SSM_PARAMETER")
 )
-stage = os.environ.get("STAGE", None)
+stage = os.environ.get("STAGE", "dev")
 host = os.environ.get("AURORA_ENDPOINT")
+
+print(f"******* HOST *******: {host}")
+print(f"******* STAGE *******: {stage}")
+print(f"******* PASS *******: {len(password)}")
+
+
 DATABASES = {
     DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
         default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-store-api-{stage}",
