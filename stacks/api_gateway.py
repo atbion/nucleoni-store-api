@@ -115,8 +115,8 @@ class ApiGatewayStack(Stack):
         )
 
         # Define a resource for /v1
-        stage_root_resource = self.nucleoni_store_api_gateway.root.add_resource("v1")
-        proxy_resource_any_method = stage_root_resource.add_proxy(
+        # stage_root_resource = self.nucleoni_store_api_gateway.root.add_resource("v1")
+        proxy_resource_any_method = self.nucleoni_store_api_gateway.root.add_proxy(
             default_integration=aws_apigateway.AwsIntegration(
                 service="lambda",
                 proxy=True,

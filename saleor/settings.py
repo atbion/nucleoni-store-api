@@ -120,32 +120,15 @@ password = decrypt_ssm_parameter(
 stage = os.environ.get("STAGE", "dev")
 host = os.environ.get("AURORA_ENDPOINT")
 
-print(f"******* HOST *******: {host}")
-print(f"******* STAGE *******: {stage}")
-print(f"******* PASS *******: {len(password)}")
-
-
-# DATABASES = {
-#     DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
-#         default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-store-api-{stage}",
-#         conn_max_age=DB_CONN_MAX_AGE,
-#     ),
-#     DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
-#         default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-store-api-{stage}",
-#         conn_max_age=DB_CONN_MAX_AGE,
-#     ),
-# }
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": f"nucleoni-store-api-{stage}",
-        "USER": "nucleoni",
-        "PASSWORD": password
-        if os.environ.get("AURORA_PASSWORD_SSM_PARAMETER")
-        else "",
-        "HOST": os.environ.get("AURORA_ENDPOINT"),
-        "PORT": "5432",
-    }
+    DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
+        default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-store-api-{stage}",
+        conn_max_age=DB_CONN_MAX_AGE,
+    ),
+    DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
+        default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-store-api-{stage}",
+        conn_max_age=DB_CONN_MAX_AGE,
+    ),
 }
 
 DATABASE_ROUTERS = ["saleor.core.db_routers.PrimaryReplicaRouter"]
