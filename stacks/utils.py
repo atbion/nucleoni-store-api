@@ -26,12 +26,11 @@ class UtilsService:
             "STAGE": stage,
             "DEPLOYMENT_REGION": region,
             "NUCLEONI_STORE_API_STORAGE_BUCKET_NAME": nucleoni_store_api_storage_bucket,
-            "DJANGO_DEBUG": "FALSE" if is_production else "TRUE",
             "AURORA_PASSWORD_SSM_PARAMETER": f"/infra/rds_password/{stage}",
             "AURORA_ENDPOINT": aurora_endpoint,
             "MEMCACHED_ENDPOINT": memcached_endpoint,
-            "DEBUG": "FALSE" if is_production else "TRUE",
-            "ENABLE_DEBUG_TOOLBAR": "FALSE" if is_production else "TRUE",
+            "DEBUG": "False" if is_production else "True",
+            "ENABLE_DEBUG_TOOLBAR": "False" if is_production else "True",
         }
 
     @staticmethod
