@@ -30,6 +30,8 @@ class UtilsService:
             "AURORA_PASSWORD_SSM_PARAMETER": f"/infra/rds_password/{stage}",
             "AURORA_ENDPOINT": aurora_endpoint,
             "MEMCACHED_ENDPOINT": memcached_endpoint,
+            "DEBUG": "FALSE" if is_production else "TRUE",
+            "ENABLE_DEBUG_TOOLBAR": "FALSE" if is_production else "TRUE",
         }
 
     @staticmethod
