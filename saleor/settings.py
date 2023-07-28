@@ -121,11 +121,11 @@ stage = os.environ.get("STAGE", None)
 host = os.environ.get("AURORA_ENDPOINT")
 DATABASES = {
     DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
-        default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-api-{stage}",
+        default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-store-api-{stage}",
         conn_max_age=DB_CONN_MAX_AGE,
     ),
     DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
-        default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-api-{stage}",
+        default=f"postgres://nucleoni:{password}@{host}:5432/nucleoni-store-api-{stage}",
         conn_max_age=DB_CONN_MAX_AGE,
     ),
 }
@@ -173,7 +173,7 @@ DEFAULT_FROM_EMAIL: str = os.environ.get(
     "DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "noreply@example.com"
 )
 
-MEDIA_ROOT: str = os.path.join(PROJECT_ROOT, "media")
+MEDIA_ROOT: str = "/tmp/public/media"
 MEDIA_URL: str = os.environ.get("MEDIA_URL", "/media/")
 
 STATIC_ROOT: str = os.path.join(PROJECT_ROOT, "static")
