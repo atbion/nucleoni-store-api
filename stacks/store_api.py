@@ -194,7 +194,7 @@ class NucleoniStoreApiStack(Stack):
                     ],
                 )
             ],
-            priority=1,
+            priority=2,
             listener=listener,
             target_groups=[target_group],
         )
