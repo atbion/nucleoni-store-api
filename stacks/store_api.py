@@ -82,8 +82,8 @@ class NucleoniStoreApiStack(Stack):
 
         task_definition_log_group = aws_logs.LogGroup(
             self,
-            f"nucleoni-store-api-task-group-{self.stage}",
-            log_group_name=f"nucleoni-store-api-task-group-{self.stage}",
+            f"nucleoni-store-api-ecs-task-group-{self.stage}",
+            log_group_name=f"nucleoni-store-api-ecs-task-group-{self.stage}",
             removal_policy=RemovalPolicy.RETAIN,
             retention=aws_logs.RetentionDays.THREE_MONTHS,
         )
