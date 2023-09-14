@@ -14,7 +14,7 @@ class UtilsService:
         return os.path.abspath(os.path.join(file_dir, ".."))
 
     @staticmethod
-    def build_lambda_environment(
+    def build_store_api_ecs_environment(
         stage: str,
         region: str,
         is_production: bool,
