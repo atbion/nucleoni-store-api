@@ -131,8 +131,8 @@ class NucleoniStoreApiStack(Stack):
                 directory=UtilsService.root_dir(),
                 file="DockerfileNucleoni",
             ),
-            cpu=256,
-            memory_limit_mib=256,
+            cpu=512,
+            memory_limit_mib=1024,
             logging=aws_ecs.LogDriver.aws_logs(
                 stream_prefix=f"nucleoni-store-api-{self.stage}",
                 log_group=task_definition_log_group,
