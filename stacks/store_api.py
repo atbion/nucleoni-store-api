@@ -80,19 +80,8 @@ class NucleoniStoreApiStack(Stack):
         task_definition = aws_ecs.FargateTaskDefinition(
             self, f"nucleoni-store-api-ecs-task-{self.stage}",
             cpu=256,
+            memory_limit_mib=1024,
         )
-
-        # task_definition.add_to_execution_role_policy(
-        #     aws_iam.PolicyStatement(
-        #         actions=[
-        #             "ssm:*",
-        #         ],
-        #         resources=[
-        #             "*",
-        #         ],
-        #         effect=aws_iam.Effect.ALLOW,
-        #     )
-        # )
 
         task_definition.add_to_task_role_policy(
             aws_iam.PolicyStatement(
