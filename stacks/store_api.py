@@ -93,6 +93,18 @@ class NucleoniStoreApiStack(Stack):
             )
         )
 
+        task_definition.add_to_task_role_policy(
+            aws_iam.PolicyStatement(
+                actions=[
+                    "ssm:*",
+                ],
+                resources=[
+                    "*",
+                ],
+                effect=aws_iam.Effect.ALLOW,
+            )
+        )
+
         task_definition_log_group = aws_logs.LogGroup(
             self,
             f"nucleoni-store-api-ecs-task-group-{self.stage}",
