@@ -79,7 +79,7 @@ class NucleoniStoreApiStack(Stack):
         # Create Task Definition
         task_definition = aws_ecs.FargateTaskDefinition(
             self, f"nucleoni-store-api-ecs-task-{self.stage}",
-            cpu=256,
+            cpu=512,
             memory_limit_mib=1024,
         )
 
@@ -121,7 +121,7 @@ class NucleoniStoreApiStack(Stack):
                 directory=UtilsService.root_dir(),
                 file="DockerfileNucleoni",
             ),
-            cpu=256,
+            cpu=512,
             memory_limit_mib=1024,
             logging=aws_ecs.LogDriver.aws_logs(
                 stream_prefix=f"nucleoni-store-api-{self.stage}",
