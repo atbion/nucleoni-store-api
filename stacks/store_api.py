@@ -81,17 +81,17 @@ class NucleoniStoreApiStack(Stack):
             self, f"nucleoni-store-api-ecs-task-{self.stage}"
         )
 
-        task_definition.add_to_execution_role_policy(
-            aws_iam.PolicyStatement(
-                actions=[
-                    "ssm:*",
-                ],
-                resources=[
-                    "*",
-                ],
-                effect=aws_iam.Effect.ALLOW,
-            )
-        )
+        # task_definition.add_to_execution_role_policy(
+        #     aws_iam.PolicyStatement(
+        #         actions=[
+        #             "ssm:*",
+        #         ],
+        #         resources=[
+        #             "*",
+        #         ],
+        #         effect=aws_iam.Effect.ALLOW,
+        #     )
+        # )
 
         task_definition.add_to_task_role_policy(
             aws_iam.PolicyStatement(
