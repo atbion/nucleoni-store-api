@@ -28,7 +28,6 @@ from sentry_sdk.integrations.logging import ignore_logger
 from . import PatchedSubscriberExecutionContext, __version__
 from .core.languages import LANGUAGES as CORE_LANGUAGES
 from .core.schedules import initiated_sale_webhook_schedule
-from pymemcache.client.hash import HashClient
 
 
 django_stubs_ext.monkeypatch()
@@ -93,25 +92,13 @@ DATABASE_CONNECTION_REPLICA_NAME = "replica"
 
 
 def decrypt_ssm_parameter(parameter_encrypted: str, region: str = "eu-west-1"):
-    cache_result = None
-    if os.environ.get("USE_CACHE"):
-        client = HashClient(
-            [
-                os.environ.get("MEMCACHED_ENDPOINT"),
-            ]
-        )
-        cache_result = client.get(parameter_encrypted)
-    if not cache_result:
-        session = boto3.Session()
-        ssm_client = session.client("ssm", region_name=region)
-        response = ssm_client.get_parameter(
-            Name=parameter_encrypted, WithDecryption=True
-        )
-        value = response["Parameter"]["Value"]
-        if os.environ.get("USE_CACHE"):
-            client.set(parameter_encrypted, value)
-        return value
-    return cache_result.decode("utf-8")
+    session = boto3.Session()
+    ssm_client = session.client("ssm", region_name=region)
+    response = ssm_client.get_parameter(
+        Name=parameter_encrypted, WithDecryption=True
+    )
+    value = response["Parameter"]["Value"]
+    return value
 
 
 password = decrypt_ssm_parameter(
