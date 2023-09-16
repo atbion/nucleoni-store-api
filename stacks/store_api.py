@@ -45,10 +45,6 @@ class NucleoniStoreApiStack(Stack):
         self.nucleoni_store_api_ecs_service = None
         self.nucleoni_store_api_certificate = nucleoni_store_api_certificate
         self.nucleoni_store_api_storage_bucket = nucleoni_store_api_storage_bucket
-        self.memcached_endpoint = aws_ssm.StringParameter.value_from_lookup(
-            self,
-            f"/infra/cache_endpoint/{self.stage}",
-        )
 
         # Setup common resources
         self.setup_common_resources()
@@ -112,7 +108,6 @@ class NucleoniStoreApiStack(Stack):
                 self,
                 f"/infra/rds_endpoint/dev",  # For now, we are using dev endpoint
             ),
-            memcached_endpoint=self.memcached_endpoint,
         )
 
         container = task_definition.add_container(

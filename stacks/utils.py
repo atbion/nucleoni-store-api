@@ -20,7 +20,6 @@ class UtilsService:
         is_production: bool,
         nucleoni_store_api_storage_bucket: str,
         aurora_endpoint: str,
-        memcached_endpoint: str,
     ):
         return {
             "STAGE": stage,
@@ -28,7 +27,6 @@ class UtilsService:
             "AWS_STORAGE_BUCKET_NAME": nucleoni_store_api_storage_bucket,
             "AURORA_PASSWORD_SSM_PARAMETER": f"/infra/rds_password/{stage}",
             "AURORA_ENDPOINT": aurora_endpoint,
-            "MEMCACHED_ENDPOINT": memcached_endpoint,
             "DEBUG": "False" if is_production else "True",
             "AWS_DEFAULT_ACL": "public-read",
             "AWS_S3_CUSTOM_DOMAIN": nucleoni_store_api_storage_bucket,
