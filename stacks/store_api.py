@@ -144,9 +144,9 @@ class NucleoniStoreApiStack(Stack):
             cluster=nucleoni_ecs_cluster,
             task_definition=task_definition,
             vpc_subnets=aws_ec2.SubnetSelection(
-                subnet_type=aws_ec2.SubnetType.PRIVATE_WITH_EGRESS
+                subnet_type=aws_ec2.SubnetType.PUBLIC,
             ),
-            assign_public_ip=False,
+            assign_public_ip=True,
             desired_count=1,
             circuit_breaker=aws_ecs.DeploymentCircuitBreaker(rollback=True),
             min_healthy_percent=100,
