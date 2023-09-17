@@ -21,6 +21,7 @@ from .thumbnail.views import handle_thumbnail
 
 def health_check_view(request):
     print(request.headers)
+    print(request.META)
     return HttpResponse(status=HTTPStatus.OK)
 
 
