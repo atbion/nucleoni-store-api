@@ -77,6 +77,18 @@ class ApiStorageBucketStack(Stack):
                 ignore_public_acls=False,
                 restrict_public_buckets=False,
             ),
+            cors=[
+                aws_s3.CorsRule(
+                    allowed_methods=[
+                        aws_s3.HttpMethods.GET,
+                        aws_s3.HttpMethods.HEAD,
+                    ],
+                    allowed_origins=["*"],
+                    allowed_headers=["*"],
+                    max_age=3000,
+                    exposed_headers=[],
+                ),
+            ],
         )
         self.nucleoni_store_api_storage_bucket = self.nucleoni_store_api_storage_bucket
         self.nucleoni_store_api_cloud_front_distribution = aws_cloudfront.Distribution(

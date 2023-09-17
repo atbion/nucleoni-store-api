@@ -24,13 +24,23 @@ class UtilsService:
         return {
             "STAGE": stage,
             "DEPLOYMENT_REGION": region,
+
+            # Storages configuration
+            "AWS_MEDIA_BUCKET_NAME": nucleoni_store_api_storage_bucket,
+            "AWS_MEDIA_CUSTOM_DOMAIN": nucleoni_store_api_storage_bucket,
+            "AWS_STATIC_CUSTOM_DOMAIN": nucleoni_store_api_storage_bucket,
             "AWS_STORAGE_BUCKET_NAME": nucleoni_store_api_storage_bucket,
+            "AWS_S3_CUSTOM_DOMAIN": nucleoni_store_api_storage_bucket,
+            "STATIC_URL": f"https://{nucleoni_store_api_storage_bucket}/",
+            "MEDIA_URL": f"https://{nucleoni_store_api_storage_bucket}/",
+
+            # Database configuration
             "AURORA_PASSWORD_SSM_PARAMETER": f"/infra/rds_password/{stage}",
             "AURORA_ENDPOINT": aurora_endpoint,
             "DEBUG": "False" if is_production else "True",
             "AWS_DEFAULT_ACL": "public-read",
-            "AWS_S3_CUSTOM_DOMAIN": nucleoni_store_api_storage_bucket,
-            "STATIC_URL" : f"https://{nucleoni_store_api_storage_bucket}/"
+
+
 
             # "ENABLE_DEBUG_TOOLBAR": "False" if is_production else "True",
         }
