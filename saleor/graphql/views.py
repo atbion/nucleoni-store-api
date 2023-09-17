@@ -1,6 +1,7 @@
 import hashlib
 import importlib
 import json
+import os
 from inspect import isclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -116,7 +117,8 @@ class GraphQLView(View):
             request,
             "graphql/playground.html",
             {
-                "api_url": request.build_absolute_uri(str(API_PATH)),
+                # "api_url": request.build_absolute_uri(str(API_PATH)),
+                "api_url": f"https://nucleoni-store-api-{os.environ.get('STAGE', 'dev')}.app.nucleoni.com/graphql/",
                 "plugins_url": request.build_absolute_uri("/plugins/"),
             },
         )
