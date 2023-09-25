@@ -221,6 +221,13 @@ class NucleoniStoreApiStack(Stack):
             target_groups=[target_group],
         )
 
+        aws_ssm.StringParameter(
+            self,
+            f"/infra/nucleoni-store-api-image-name/{self.stage}",
+            parameter_name=f"/infra/nucleoni-store-api-image-name/{self.stage}",
+            string_value=container.image_name,
+        )
+
     def setup_nucleoni_store_api_cloud_front_distribution(self):
         domain_name = aws_ssm.StringParameter.value_from_lookup(
             self,
