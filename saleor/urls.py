@@ -9,7 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .core.views import jwks
 from .graphql.api import schema
-from .graphql.views import GraphQLView
+from .graphql.nucleoni_views import NucleoniGraphQLView
+# from .graphql.views import GraphQLView
 from .plugins.views import (
     handle_global_plugin_webhook,
     handle_plugin_per_channel_webhook,
@@ -26,7 +27,11 @@ def health_check_view(request):
 
 
 urlpatterns = [
-    re_path(r"^graphql/$", csrf_exempt(GraphQLView.as_view(schema=schema)), name="api"),
+    re_path(r"^graphql/$", csrf_exempt(NucleoniGraphQLView.as_view(schema=schema))),
+    re_path(
+        r"^explore/$",
+        csrf_exempt(NucleoniGraphQLView.as_view(graphiql=True, schema=schema)),
+    ),
     re_path(
         r"^digital-download/(?P<token>[0-9A-Za-z_\-]+)/$",
         digital_product,
