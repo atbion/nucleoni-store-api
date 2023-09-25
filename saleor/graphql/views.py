@@ -1,7 +1,6 @@
 import hashlib
 import importlib
 import json
-import os
 from inspect import isclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -21,13 +20,15 @@ from jwt.exceptions import PyJWTError
 
 from .. import __version__ as saleor_version
 from ..core.exceptions import PermissionDenied, ReadOnlyException
-from ..core.utils import is_valid_ipv4, is_valid_ipv6
+from ..core.utils import is_valid_ipv4, is_valid_ipv6, build_absolute_uri
 from ..webhook import observability
 from .api import API_PATH, schema
 from .context import get_context_value
 from .core.validators.query_cost import validate_query_cost
 from .query_cost_map import COST_MAP
 from .utils import format_error, query_fingerprint, query_identifier
+from django.contrib.staticfiles.storage import staticfiles_storage
+
 
 INT_ERROR_MSG = "Int cannot represent non 32-bit signed integer value"
 
@@ -48,6 +49,34 @@ def tracing_wrapper(execute, sql, params, many, context):
 
 
 class GraphQLView(View):
+    graphiql_template = "graphql/playground.html"
+
+    # Polyfill for window.fetch.
+    whatwg_fetch_version = "3.6.2"
+    whatwg_fetch_sri = "sha256-+pQdxwAcHJdQ3e/9S4RK6g8ZkwdMgFQuHvLuN5uyk5c="
+
+    # React and ReactDOM.
+    react_version = "17.0.2"
+    react_sri = "sha256-Ipu/TQ50iCCVZBUsZyNJfxrDk0E2yhaEIz0vqI+kFG8="
+    react_dom_sri = "sha256-nbMykgB6tsOFJ7OdVmPpdqMFVk4ZsqWocT6issAPUF0="
+
+    # The GraphiQL React app.
+    graphiql_version = "2.4.7"
+    graphiql_sri = "sha256-n/LKaELupC1H/PU6joz+ybeRJHT2xCdekEt6OYMOOZU="
+    graphiql_css_sri = "sha256-OsbM+LQHcnFHi0iH7AUKueZvDcEBoy/z4hJ7jx1cpsM="
+
+    # The websocket transport library for subscriptions.
+    subscriptions_transport_ws_version = "5.13.1"
+    subscriptions_transport_ws_sri = (
+        "sha256-EZhvg6ANJrBsgLvLAa0uuHNLepLJVCFYS+xlb5U/bqw="
+    )
+
+    graphiql_plugin_explorer_version = "0.1.15"
+    graphiql_plugin_explorer_sri = "sha256-3hUuhBXdXlfCj6RTeEkJFtEh/kUG+TCDASFpFPLrzvE="
+    graphiql_plugin_explorer_css_sri = (
+        "sha256-fA0LPUlukMNR6L4SPSeFqDTYav8QdWjQ2nr559Zln1U="
+    )
+
     # This class is our implementation of `graphene_django.views.GraphQLView`,
     # which was extended to support the following features:
     # - Playground as default the API explorer (see
@@ -117,9 +146,25 @@ class GraphQLView(View):
             request,
             "graphql/playground.html",
             {
-                # "api_url": request.build_absolute_uri(str(API_PATH)),
-                "api_url": f"https://nucleoni-store-api-{os.environ.get('STAGE', 'dev')}.app.nucleoni.com/graphql/",
                 "plugins_url": request.build_absolute_uri("/plugins/"),
+                "whatwg_fetch_version": self.whatwg_fetch_version,
+                "whatwg_fetch_sri": self.whatwg_fetch_sri,
+                "react_version": self.react_version,
+                "react_sri": self.react_sri,
+                "react_dom_sri": self.react_dom_sri,
+                "graphiql_version": self.graphiql_version,
+                "graphiql_sri": self.graphiql_sri,
+                "graphiql_css_sri": self.graphiql_css_sri,
+                "subscriptions_transport_ws_version": self.subscriptions_transport_ws_version,
+                "subscriptions_transport_ws_sri": self.subscriptions_transport_ws_sri,
+                "graphiql_plugin_explorer_version": self.graphiql_plugin_explorer_version,
+                "graphiql_plugin_explorer_sri": self.graphiql_plugin_explorer_sri,
+                # The SUBSCRIPTION_PATH setting.
+                "subscription_path": None,
+                # GraphiQL headers tab,
+                "graphiql_header_editor_enabled": True,
+                "graphiql_should_persist_headers": True,
+                "graphiql_js": build_absolute_uri(staticfiles_storage.url("js/graphiql.js")),
             },
         )
 
