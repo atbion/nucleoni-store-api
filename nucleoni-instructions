@@ -1,0 +1,6 @@
+Sincronizar con el fork
+1- git fetch --tags upstream
+2- git push --tags
+
+Crear una rama a partir de un tag (release) especifico, ej. 3.18.0
+git checkout -b nucleoni-store-api-3.18.0 3.18.0
