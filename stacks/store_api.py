@@ -90,6 +90,9 @@ class StoreApiStack(Stack):
         container = task_definition.add_container(
             f"store-api-container-{self.stage}",
             image=aws_ecs.ContainerImage.from_asset(
+                build_args={
+                    "AWS_MEDIA_BUCKET_NAME": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
+                },
                 directory=UtilsService.root_dir(),
                 file="Dockerfile",
             ),
