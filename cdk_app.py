@@ -24,7 +24,7 @@ us_certificates_stack = UsCertificatesStack(
     env=env_us,
 )
 
-landing_api_storage_bucket_stack = StoreApiStorageBucketStack(
+store_api_storage_bucket_stack = StoreApiStorageBucketStack(
     app,
     f"nucleoni-store-api-storage-bucket-{stage}",
     env=env_us,
@@ -34,7 +34,7 @@ nucleoni_store_api_ecs_service_stack = StoreApiStack(
     app,
     f"nucleoni-store-api-stack-{stage}",
     env=env_eu,
-    store_api_storage_bucket=landing_api_storage_bucket_stack.store_api_storage_bucket,
+    store_api_storage_bucket=store_api_storage_bucket_stack.store_api_storage_bucket,
     store_api_certificate=us_certificates_stack.store_api_certificate,
     cross_region_references=True,
 )

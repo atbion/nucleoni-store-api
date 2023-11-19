@@ -47,7 +47,7 @@ class StoreApiStorageBucketStack(Stack):
         # Create CloudFront Certificate
         cloud_front_certificate = aws_certificatemanager.Certificate(
             self,
-            f"cloud-front-certificate-{self.stage}",
+            f"store-api-assets-cloud-front-certificate-{self.stage}",
             domain_name="store-api-assets.nucleoni.com",
             validation=aws_certificatemanager.CertificateValidation.from_dns(
                 self.hosted_zone
