@@ -20,7 +20,7 @@ app = cdk.App()
 
 us_certificates_stack = UsCertificatesStack(
     app,
-    f"nucleoni-store-api-us-certificates-stack-{stage}",
+    f"nucleoni-store-api-us-cert-stack-{stage}",
     env=env_us,
 )
 
