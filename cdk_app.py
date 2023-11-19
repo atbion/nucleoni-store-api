@@ -26,7 +26,7 @@ us_certificates_stack = UsCertificatesStack(
 
 store_api_storage_bucket_stack = StoreApiStorageBucketStack(
     app,
-    f"nucleoni-store-api-storage-bucket-{stage}",
+    f"nucleoni-store-api-bucket-{stage}",
     env=env_us,
 )
 
