@@ -31,6 +31,7 @@ class UtilsService:
             "AURORA_PASSWORD_SSM_PARAMETER": "/infra/rds_password/cluster-1",
             "NUCLEONI_ROOT_PASSWORD_SSM_PARAMETER": f"/infra/nucleoni-root/password/{stage}",
             "AURORA_ENDPOINT": aurora_endpoint,
+            "AWS_STATIC_CUSTOM_DOMAIN": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
         }
 
     @staticmethod
