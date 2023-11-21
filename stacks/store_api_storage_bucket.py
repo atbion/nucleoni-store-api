@@ -73,34 +73,6 @@ class StoreApiStorageBucketStack(Stack):
             public_read_access=False,
         )
 
-        github_role_arn = "arn:aws:iam::486592719971:role/github-actions-role"
-        github_role = aws_iam.Role.from_role_arn(self, "GitHubRole", github_role_arn)
-
-        write_policy = aws_iam.PolicyDocument(
-            statements=[
-                aws_iam.PolicyStatement(
-                    actions=["s3:PutObject", "s3:PutObjectAcl"],
-                    resources=[f"{self.store_api_storage_bucket.bucket_arn}/*"]
-                )
-            ]
-        )
-        
-        github_role.attach_inline_policy(
-            aws_iam.Policy(self, "WritePolicy", document=write_policy)
-        )
-
-        self.store_api_storage_bucket.add_to_resource_policy(
-            aws_iam.PolicyStatement(
-                principals=[
-                    aws_iam.AnyPrincipal()
-                ],
-                actions=[
-                    "s3:*",
-                ],
-                resources=["*"],
-            )
-        )
-
         self.store_api_cloud_front_distribution = aws_cloudfront.Distribution(
             self,
             f"store-api-cloud-front-distribution-{self.stage}",
