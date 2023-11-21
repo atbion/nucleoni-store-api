@@ -6,9 +6,8 @@ on:
       - nucleoni-store-api-prod-3.18.0
 env:
   STAGE: "prod"
-  LANDING_API_STORAGE_BUCKET_NAME: "store-api-assets.nucleoni.com"
-  SECRET_KEY: "dummy"
-  AWS_DEFAULT_ACL: 0
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   deploy:
