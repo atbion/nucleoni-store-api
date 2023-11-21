@@ -92,6 +92,7 @@ class StoreApiStack(Stack):
             image=aws_ecs.ContainerImage.from_asset(
                 build_args={
                     "STATIC_URL": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
+                    "AWS_STATIC_CUSTOM_DOMAIN": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
                 },
                 directory=UtilsService.root_dir(),
                 file="Dockerfile",
