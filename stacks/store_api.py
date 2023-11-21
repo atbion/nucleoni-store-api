@@ -90,15 +90,6 @@ class StoreApiStack(Stack):
         container = task_definition.add_container(
             f"store-api-container-{self.stage}",
             image=aws_ecs.ContainerImage.from_asset(
-                build_args={
-                    "STATIC_URL": self.store_api_storage_bucket.bucket_name,
-                    "AWS_STATIC_CUSTOM_DOMAIN": self.store_api_storage_bucket.bucket_name,
-                    "AWS_STORAGE_BUCKET_NAME": self.store_api_storage_bucket.bucket_name,
-                    "KEY_VALUE": os.environ.get(
-                        "KEY_VALUE"),
-                    "A_KEY_VALUE": os.environ.get(
-                        "A_KEY_VALUE"),
-                },
                 directory=UtilsService.root_dir(),
                 file="Dockerfile",
             ),

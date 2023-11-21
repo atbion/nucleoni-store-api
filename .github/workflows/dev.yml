@@ -7,8 +7,11 @@ on:
       - feature/*
 env:
   STAGE: "dev"
-  KEY_VALUE: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  A_KEY_VALUE: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  STATIC_URL: dev.store-api-assets.nucleoni.com
+  AWS_STATIC_CUSTOM_DOMAIN: dev.store-api-assets.nucleoni.com
+  AWS_STORAGE_BUCKET_NAME: dev.store-api-assets.nucleoni.com
+  SECRET_KEY: dummy
+  AWS_DEFAULT_ACL: 0
 
 jobs:
   deploy:
@@ -41,3 +44,13 @@ jobs:
         run: cdk synth
       - name: Deploy stack
         run: cdk deploy --all --require-approval never
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+      - name: Install Python dependencies
+        run: poetry install
+      - name: Collect static assets
+        run: python3 manage.py collectstatic --no-input
