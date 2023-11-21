@@ -17,12 +17,12 @@ from stacks.utils import UtilsService
 
 class StoreApiStack(Stack):
     def __init__(
-            self,
-            scope: Construct,
-            construct_id: str,
-            store_api_storage_bucket: aws_s3.Bucket,
-            store_api_certificate: aws_certificatemanager.Certificate,
-            **kwargs,
+        self,
+        scope: Construct,
+        construct_id: str,
+        store_api_storage_bucket: aws_s3.Bucket,
+        store_api_certificate: aws_certificatemanager.Certificate,
+        **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
@@ -91,9 +91,9 @@ class StoreApiStack(Stack):
             f"store-api-container-{self.stage}",
             image=aws_ecs.ContainerImage.from_asset(
                 build_args={
-                    "STATIC_URL": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
-                    "AWS_STATIC_CUSTOM_DOMAIN": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
-                    "AWS_STORAGE_BUCKET_NAME": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
+                    "STATIC_URL": self.store_api_storage_bucket.bucket_name,
+                    "AWS_STATIC_CUSTOM_DOMAIN": self.store_api_storage_bucket.bucket_name,
+                    "AWS_STORAGE_BUCKET_NAME": self.store_api_storage_bucket.bucket_name,
                     "AWS_ACCESS_KEY_ID": os.environ.get("AWS_ACCESS_KEY_ID"),
                     "AWS_SECRET_ACCESS_KEY": os.environ.get("AWS_SECRET_ACCESS_KEY"),
                 },
@@ -247,7 +247,8 @@ class StoreApiStack(Stack):
                 ),
                 compress=True,
             ),
-            domain_names=["store-api.nucleoni.com" if self.is_production else f"{self.stage}.store-api.nucleoni.com"],
+            domain_names=[
+                "store-api.nucleoni.com" if self.is_production else f"{self.stage}.store-api.nucleoni.com"],
             certificate=self.store_api_certificate,
         )
 
