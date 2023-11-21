@@ -94,8 +94,10 @@ class StoreApiStack(Stack):
                     "STATIC_URL": self.store_api_storage_bucket.bucket_name,
                     "AWS_STATIC_CUSTOM_DOMAIN": self.store_api_storage_bucket.bucket_name,
                     "AWS_STORAGE_BUCKET_NAME": self.store_api_storage_bucket.bucket_name,
-                    "AWS_ACCESS_KEY_ID": os.environ.get("AWS_ACCESS_KEY_ID"),
-                    "AWS_SECRET_ACCESS_KEY": os.environ.get("AWS_SECRET_ACCESS_KEY"),
+                    "AWS_ACCESS_KEY_ID_VALUE": os.environ.get(
+                        "AWS_ACCESS_KEY_ID_VALUE"),
+                    "AWS_SECRET_ACCESS_KEY_VALUE": os.environ.get(
+                        "AWS_SECRET_ACCESS_KEY_VALUE"),
                 },
                 directory=UtilsService.root_dir(),
                 file="Dockerfile",
