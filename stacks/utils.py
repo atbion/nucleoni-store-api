@@ -26,12 +26,12 @@ class UtilsService:
             "STAGE": stage,
             "DEPLOYMENT_REGION": region,
             "STORE_API_STORAGE_BUCKET_NAME": store_api_storage_bucket,
-            "STORAGE_USE_S3": "TRUE",
             "DJANGO_DEBUG": "FALSE" if is_production else "TRUE",
             "AURORA_PASSWORD_SSM_PARAMETER": "/infra/rds_password/cluster-1",
             "NUCLEONI_ROOT_PASSWORD_SSM_PARAMETER": f"/infra/nucleoni-root/password/{stage}",
             "AURORA_ENDPOINT": aurora_endpoint,
             "AWS_STATIC_CUSTOM_DOMAIN": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
+            "AWS_STORAGE_BUCKET_NAME": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
         }
 
     @staticmethod
