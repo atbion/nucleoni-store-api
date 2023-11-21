@@ -70,7 +70,7 @@ class StoreApiStorageBucketStack(Stack):
             bucket_name=store_api_storage_bucket_name,
             removal_policy=RemovalPolicy.RETAIN,
             auto_delete_objects=False,
-            public_read_access=False,
+            public_read_access=True,
         )
 
         self.store_api_cloud_front_distribution = aws_cloudfront.Distribution(
