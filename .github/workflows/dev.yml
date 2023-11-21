@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: "20"
       - name: Set up Python 3.11
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: "3.11"
       - name: Configure AWS credentials
@@ -45,12 +45,18 @@ jobs:
       - name: Deploy stack
         run: cdk deploy --all --require-approval never
       - name: Set up Python 3.9
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: "3.9"
       - name: Install Poetry
-        run: curl -sSL https://install.python-poetry.org | python3 -
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
       - name: Install Python dependencies
-        run: poetry install
+        run: poetry install --no-interaction --no-root
       - name: Collect static assets
-        run: python3.9 manage.py collectstatic --no-input
+        run: |
+          source .venv/bin/activate
+          python manage.py collectstatic --no-input
