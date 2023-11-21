@@ -16,6 +16,7 @@ from aws_cdk import (
     aws_route53_targets,
     aws_s3,
     aws_ssm,
+    aws_iam,
 )
 from constructs import Construct
 
@@ -71,6 +72,19 @@ class StoreApiStorageBucketStack(Stack):
             auto_delete_objects=False,
             public_read_access=False,
         )
+
+        self.store_api_storage_bucket.add_to_resource_policy(
+            aws_iam.PolicyStatement(
+                principals=[
+                    aws_iam.AnyPrincipal()
+                ],
+                actions=[
+                    "s3:*",
+                ],
+                resources=["*"],
+            )
+        )
+
         self.store_api_cloud_front_distribution = aws_cloudfront.Distribution(
             self,
             f"store-api-cloud-front-distribution-{self.stage}",
