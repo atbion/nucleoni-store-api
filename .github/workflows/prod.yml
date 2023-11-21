@@ -6,8 +6,8 @@ on:
       - nucleoni-store-api-prod-3.18.0
 env:
   STAGE: "prod"
-  AWS_ACCESS_KEY_ID_VALUE: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY_VALUE: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  KEY_VALUE: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  A_KEY_VALUE: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   deploy:
