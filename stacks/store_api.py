@@ -93,6 +93,7 @@ class StoreApiStack(Stack):
                 build_args={
                     "STATIC_URL": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
                     "AWS_STATIC_CUSTOM_DOMAIN": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
+                    "AWS_STORAGE_BUCKET_NAME": os.environ.get("AWS_MEDIA_BUCKET_NAME"),
                 },
                 directory=UtilsService.root_dir(),
                 file="Dockerfile",
