@@ -12,8 +12,8 @@ env:
   SECRET_KEY: "dummy"
   STORAGE_USE_S3: "TRUE"
   AWS_DEFAULT_ACL: "public-read"
-#  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   deploy:
@@ -24,28 +24,28 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-#      - uses: actions/setup-node@v2
-#        with:
-#          node-version: "20"
-#      - name: Set up Python 3.11
-#        uses: actions/setup-python@v4
-#        with:
-#          python-version: "3.11"
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - uses: actions/setup-node@v2
         with:
-          role-to-assume: arn:aws:iam::486592719971:role/github-actions-role
-          aws-region: eu-west-1
-#      - name: Install dependencies
-#        run: npm install -g aws-cdk
-#      - name: Install CDK required packages
-#        run: pip install -r requirements_cdk.txt
-#      - name: Bootstrap stack
-#        run: cdk bootstrap
-#      - name: Synth stack
-#        run: cdk synth
-#      - name: Deploy stack
-#        run: cdk deploy --all --require-approval never
+          node-version: "20"
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v2
+#        with:
+#          role-to-assume: arn:aws:iam::486592719971:role/github-actions-role
+#          aws-region: eu-west-1
+      - name: Install dependencies
+        run: npm install -g aws-cdk
+      - name: Install CDK required packages
+        run: pip install -r requirements_cdk.txt
+      - name: Bootstrap stack
+        run: cdk bootstrap
+      - name: Synth stack
+        run: cdk synth
+      - name: Deploy stack
+        run: cdk deploy --all --require-approval never
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
         with:
