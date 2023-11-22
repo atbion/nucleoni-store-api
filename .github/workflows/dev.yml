@@ -12,6 +12,8 @@ env:
   SECRET_KEY: "dummy"
   STORAGE_USE_S3: "TRUE"
   AWS_DEFAULT_ACL: 0
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   deploy:
@@ -29,11 +31,11 @@ jobs:
 #        uses: actions/setup-python@v4
 #        with:
 #          python-version: "3.11"
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::486592719971:role/github-actions-role
-          aws-region: eu-west-1
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v2
+#        with:
+#          role-to-assume: arn:aws:iam::486592719971:role/github-actions-role
+#          aws-region: eu-west-1
 #      - name: Install dependencies
 #        run: npm install -g aws-cdk
 #      - name: Install CDK required packages
@@ -56,11 +58,6 @@ jobs:
           installer-parallel: true
       - name: Install Python dependencies
         run: poetry install --no-interaction
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::486592719971:role/github-actions-role
-          aws-region: eu-west-1
       - name: Collect static assets
         run: |
           source .venv/bin/activate
