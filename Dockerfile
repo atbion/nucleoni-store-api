@@ -48,7 +48,7 @@ COPY --from=build-python /usr/local/bin/ /usr/local/bin/
 COPY . /app
 WORKDIR /app
 
-EXPOSE 8000
+EXPOSE 80
 ENV PYTHONUNBUFFERED 1
 
 LABEL org.opencontainers.image.title="saleor/saleor"                                  \
@@ -60,4 +60,4 @@ GraphQL, Django, and ReactJS."                                                  
       org.opencontainers.image.authors="Saleor Commerce (https://saleor.io)"           \
       org.opencontainers.image.licenses="BSD 3"
 
-CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "--worker-class", "saleor.asgi.gunicorn_worker.UvicornWorker", "saleor.asgi:application"]
+CMD ["gunicorn", "--bind", ":80", "--workers", "4", "--worker-class", "saleor.asgi.gunicorn_worker.UvicornWorker", "saleor.asgi:application"]

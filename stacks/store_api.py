@@ -114,7 +114,7 @@ class StoreApiStack(Stack):
         )
 
         port_mapping = aws_ecs.PortMapping(
-            container_port=8000, protocol=aws_ecs.Protocol.TCP
+            container_port=80, protocol=aws_ecs.Protocol.TCP
         )
 
         container.add_port_mappings(port_mapping)
