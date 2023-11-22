@@ -115,7 +115,7 @@ stage = os.environ.get("STAGE", "dev")
 user = "nucleoni"
 password = decrypt_ssm_parameter(
     parameter_encrypted=os.environ.get("AURORA_PASSWORD_SSM_PARAMETER")
-)
+) if os.environ.get("AURORA_PASSWORD_SSM_PARAMETER") else ""
 host = os.environ.get("AURORA_ENDPOINT")
 db = f"nucleoni-store-api-{stage}"
 DATABASES = {
