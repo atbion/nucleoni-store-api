@@ -172,12 +172,14 @@ class StoreApiStack(Stack):
             ],
             vpc=self.vpc,
             health_check=aws_elasticloadbalancingv2.HealthCheck(
+                enabled=True,
                 path="/health",
                 interval=Duration.seconds(30),
                 timeout=Duration.seconds(5),
                 healthy_threshold_count=2,
                 unhealthy_threshold_count=2,
                 healthy_http_codes="200",
+                port="80",
             ),
         )
 
