@@ -66,7 +66,7 @@ class StoreApiStack(Stack):
         task_definition = aws_ecs.FargateTaskDefinition(
             self, f"store-api-ecs-task-{self.stage}",
             cpu=256,
-            memory_limit_mib=1024,
+            memory_limit_mib=1536,
         )
 
         task_definition.add_to_task_role_policy(
@@ -96,7 +96,7 @@ class StoreApiStack(Stack):
                 file="Dockerfile",
             ),
             cpu=256,
-            memory_limit_mib=1024,
+            memory_limit_mib=1536,
             logging=aws_ecs.LogDriver.aws_logs(
                 stream_prefix=f"store-api-{self.stage}",
                 log_group=task_definition_log_group,
@@ -177,7 +177,7 @@ class StoreApiStack(Stack):
                 interval=Duration.seconds(30),
                 timeout=Duration.seconds(5),
                 healthy_threshold_count=2,
-                unhealthy_threshold_count=2,
+                unhealthy_threshold_count=5,
                 healthy_http_codes="200",
                 port="80",
             ),
