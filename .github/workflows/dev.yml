@@ -56,6 +56,11 @@ jobs:
           installer-parallel: true
       - name: Install Python dependencies
         run: poetry install --no-interaction
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::486592719971:role/github-actions-role
+          aws-region: eu-west-1
       - name: Collect static assets
         run: |
           source .venv/bin/activate
