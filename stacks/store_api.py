@@ -64,7 +64,9 @@ class StoreApiStack(Stack):
 
         # Create Task Definition
         task_definition = aws_ecs.FargateTaskDefinition(
-            self, f"store-api-ecs-task-{self.stage}"
+            self, f"store-api-ecs-task-{self.stage}",
+            cpu=256,
+            memory_limit_mib=1024,
         )
 
         task_definition.add_to_task_role_policy(
