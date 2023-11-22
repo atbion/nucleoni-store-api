@@ -94,7 +94,7 @@ class StoreApiStack(Stack):
                 file="Dockerfile",
             ),
             cpu=256,
-            memory_limit_mib=256,
+            memory_limit_mib=1024,
             logging=aws_ecs.LogDriver.aws_logs(
                 stream_prefix=f"store-api-{self.stage}",
                 log_group=task_definition_log_group,
