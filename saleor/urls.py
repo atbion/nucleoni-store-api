@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.views import serve
-from django.urls import include, re_path
+from django.urls import include, re_path, path
 from django.views.decorators.csrf import csrf_exempt
-
+from http import HTTPStatus
 from .core.views import jwks
 from .graphql.api import schema
 from .graphql.views import GraphQLView
@@ -14,6 +14,12 @@ from .plugins.views import (
 )
 from .product.views import digital_product
 from .thumbnail.views import handle_thumbnail
+from django.http import HttpResponse
+
+
+def health_check_view(request):
+    return HttpResponse(status=HTTPStatus.OK)
+
 
 urlpatterns = [
     re_path(r"^graphql/$", csrf_exempt(GraphQLView.as_view(schema=schema)), name="api"),
@@ -47,6 +53,7 @@ urlpatterns = [
         name="thumbnail",
     ),
     re_path(r"^\.well-known/jwks.json$", jwks, name="jwks"),
+    path("health", csrf_exempt(health_check_view), name="health"),
 ]
 
 if settings.DEBUG:
