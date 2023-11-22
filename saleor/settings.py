@@ -2,6 +2,7 @@ import ast
 import logging
 import os
 import os.path
+import boto3
 import warnings
 from datetime import timedelta
 from typing import Optional
@@ -99,13 +100,31 @@ DATABASE_CONNECTION_DEFAULT_NAME = "default"
 # This variable should be set to `replica`
 DATABASE_CONNECTION_REPLICA_NAME = "replica"
 
+
+def decrypt_ssm_parameter(parameter_encrypted: str, region: str = "eu-west-1"):
+    session = boto3.Session()
+    ssm_client = session.client("ssm", region_name=region)
+    response = ssm_client.get_parameter(
+        Name=parameter_encrypted, WithDecryption=True
+    )
+    value = response["Parameter"]["Value"]
+    return value
+
+
+stage = os.environ.get("STAGE", "dev")
+user = "nucleoni"
+password = decrypt_ssm_parameter(
+    parameter_encrypted=os.environ.get("AURORA_PASSWORD_SSM_PARAMETER")
+)
+host = os.environ.get("AURORA_ENDPOINT")
+db = f"nucleoni-store-api-{stage}"
 DATABASES = {
     DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
-        default="postgres://saleor:saleor@localhost:5432/saleor",
+        default=f"postgres://{user}:{password}@{host}:5432/{db}",
         conn_max_age=DB_CONN_MAX_AGE,
     ),
     DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
-        default="postgres://saleor:saleor@localhost:5432/saleor",
+        default=f"postgres://{user}:{password}@{host}:5432/{db}",
         # TODO: We need to add read only user to saleor platform,
         # and we need to update docs.
         # default="postgres://saleor_read_only:saleor@localhost:5432/saleor",
@@ -430,7 +449,6 @@ MAX_USER_ADDRESSES = int(os.environ.get("MAX_USER_ADDRESSES", 100))
 
 TEST_RUNNER = "saleor.tests.runner.PytestTestRunner"
 
-
 PLAYGROUND_ENABLED = get_bool_from_env("PLAYGROUND_ENABLED", True)
 
 ALLOWED_HOSTS = get_list(os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1,*"))
@@ -504,7 +522,6 @@ PLACEHOLDER_IMAGES = {
     2048: "images/placeholder2048.png",
     4096: "images/placeholder4096.png",
 }
-
 
 AUTHENTICATION_BACKENDS = [
     "saleor.core.auth_backend.JSONWebTokenBackend",
@@ -678,7 +695,6 @@ DEFAULT_CHANNEL_SLUG = os.environ.get("DEFAULT_CHANNEL_SLUG", "default-channel")
 # product.
 POPULATE_DEFAULTS = get_bool_from_env("POPULATE_DEFAULTS", True)
 
-
 #  Sentry
 sentry_sdk.utils.MAX_STRING_LENGTH = 4096  # type: ignore[attr-defined]
 SENTRY_DSN = os.environ.get("SENTRY_DSN")
@@ -791,7 +807,6 @@ if "JAEGER_AGENT_HOST" in os.environ:
         validate=True,
     ).initialize_tracer()
 
-
 # Some cloud providers (Heroku) export REDIS_URL variable instead of CACHE_URL
 REDIS_URL = os.environ.get("REDIS_URL")
 if REDIS_URL:
@@ -805,7 +820,6 @@ JWT_TTL_APP_ACCESS = timedelta(
     seconds=parse(os.environ.get("JWT_TTL_APP_ACCESS", "5 minutes"))
 )
 JWT_TTL_REFRESH = timedelta(seconds=parse(os.environ.get("JWT_TTL_REFRESH", "30 days")))
-
 
 JWT_TTL_REQUEST_EMAIL_CHANGE = timedelta(
     seconds=parse(os.environ.get("JWT_TTL_REQUEST_EMAIL_CHANGE", "1 hour")),
@@ -829,7 +843,6 @@ SEARCH_ORDERS_MAX_INDEXED_LINES = 100
 PRODUCT_MAX_INDEXED_ATTRIBUTES = 1000
 PRODUCT_MAX_INDEXED_ATTRIBUTE_VALUES = 100
 PRODUCT_MAX_INDEXED_VARIANTS = 1000
-
 
 # Patch SubscriberExecutionContext class from `graphql-core-legacy` package
 # to fix bug causing not returning errors for subscription queries.
@@ -860,13 +873,3 @@ CONFIRMATION_EMAIL_LOCK_TIME = parse(
 OAUTH_UPDATE_LAST_LOGIN_THRESHOLD = parse(
     os.environ.get("OAUTH_UPDATE_LAST_LOGIN_THRESHOLD", "15 minutes")
 )
-
-# STORAGE_USE_S3 = os.environ.get("STORAGE_USE_S3") == "TRUE"
-# if STORAGE_USE_S3:
-#     AWS_STORAGE_BUCKET_NAME = os.environ.get("STORE_API_STORAGE_BUCKET_NAME")
-#     AWS_DEFAULT_ACL = "public-read"
-#     AWS_S3_CUSTOM_DOMAIN = AWS_STORAGE_BUCKET_NAME
-#     AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
-#     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
-#     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-#     STATICFILES_STORAGE = "storages.backends.s3boto3.S3StaticStorage"
