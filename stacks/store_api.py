@@ -95,6 +95,7 @@ class StoreApiStack(Stack):
                 directory=UtilsService.root_dir(),
                 file="Dockerfile",
             ),
+            container_name=f"store-api-container-{self.stage}",
             cpu=512,
             memory_limit_mib=2048,
             logging=aws_ecs.LogDriver.aws_logs(
