@@ -200,11 +200,26 @@ class StoreApiStack(Stack):
             target_groups=[target_group],
         )
 
+        store_api_provisioning_task_definition_sg = aws_ec2.SecurityGroup(
+            self,
+            f"store-api-provisioning-task-definition-sg-{self.stage}",
+            vpc=self.vpc,
+            description="Allow task definition for provisioning",
+            allow_all_outbound=True,
+        )
+
         aws_ssm.StringParameter(
             self,
             f"/infra/store-api-task-definition-arn/{self.stage}",
             parameter_name=f"/infra/store-api-task-definition-arn/{self.stage}",
             string_value=task_definition.task_definition_arn,
+        )
+
+        aws_ssm.StringParameter(
+            self,
+            f"/infra/store-api-provisioning-task-definition-sg-id/{self.stage}",
+            parameter_name=f"/infra/store-api-provisioning-task-definition-sg-id/{self.stage}",
+            string_value=store_api_provisioning_task_definition_sg.security_group_id,
         )
 
     def setup_store_api_cloud_front_distribution(self):
