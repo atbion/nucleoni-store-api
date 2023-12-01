@@ -202,7 +202,8 @@ class StoreApiStack(Stack):
         aws_ssm.StringParameter(
             self,
             f"/infra/store-api-task-definition-arn/{self.stage}",
-            string_value=task_definition.task_definition_arn
+            parameter_name=f"/infra/store-api-task-definition-arn/{self.stage}",
+            string_value=task_definition.task_definition_arn,
         )
 
     def setup_store_api_cloud_front_distribution(self):
