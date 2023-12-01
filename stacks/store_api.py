@@ -199,6 +199,12 @@ class StoreApiStack(Stack):
             target_groups=[target_group],
         )
 
+        aws_ssm.StringParameter(
+            self,
+            f"/infra/store-api-task-definition-arn/{self.stage}",
+            string_value=task_definition.task_definition_arn
+        )
+
     def setup_store_api_cloud_front_distribution(self):
         self.store_api_cloud_front_distribution = aws_cloudfront.Distribution(
             self,
