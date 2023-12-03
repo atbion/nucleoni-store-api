@@ -73,7 +73,7 @@ def system_handler():
                 settings.DATABASE_CONNECTION_REPLICA_NAME
             ]
 
-        execute_from_command_line(["migrate", "--noinput"])
+        execute_from_command_line(["migrate"])
         logger.info(f"Database migrated: {customer_provisioning_db.database_name}")
 
         customer_provisioning_db.is_database_provisioned = True
