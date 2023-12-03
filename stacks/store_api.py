@@ -74,6 +74,7 @@ class StoreApiStack(Stack):
                 actions=[
                     "ssm:*",
                     "dynamodb:*",
+                    "states:*",
                 ],
                 resources=[
                     "*",
