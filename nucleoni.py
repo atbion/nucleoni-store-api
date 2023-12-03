@@ -71,7 +71,7 @@ def system_handler():
         management.call_command("migrate", "--noinput")
         logger.info(f"Database migrated: {customer_provisioning_db.database_name}")
 
-        customer_provisioning_db.database_migrated = True
+        customer_provisioning_db.is_database_provisioned = True
         ProvisioningCrud.update_customer_provisioning_impl(
             customer_provisioning_db=customer_provisioning_db,
         )
