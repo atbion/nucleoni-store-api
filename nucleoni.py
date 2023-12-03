@@ -7,6 +7,9 @@ Yadisnel Galvez Velazquez <yadisnel@atbion.com>
 import os
 import logging
 
+from saas.provisioning.crud.provisioning import ProvisioningCrud
+from saas.provisioning.models.provisioning import CustomerProvisioningDb
+
 logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -17,9 +20,10 @@ class OperationTypeNotFound(Exception):
 
 
 def system_handler():
+    customer_id = os.environ.get("CUSTOMER_ID")
     logger.info(
         f"SYSTEM HANDLER PROVISIONING_DATABASE_OPERATION: {os.environ.get('PROVISIONING_DATABASE_OPERATION')}")
-    logger.info(f"SYSTEM HANDLER CUSTOMER_ID: {os.environ.get('CUSTOMER_ID')}")
+    logger.info(f"SYSTEM HANDLER CUSTOMER_ID: {customer_id}")
     logger.info(
         f"SYSTEM HANDLER SETUP_DATABASE_STEP_TASK_TOKEN: {os.environ.get('SETUP_DATABASE_STEP_TASK_TOKEN')}")
     os.environ["DJANGO_SETTINGS_MODULE"] = "saleor.settings"
@@ -29,27 +33,22 @@ def system_handler():
     from saleor import settings
     import dj_database_url
     import boto3
-    from dynamodb import dynamodb_json_dumps, dynamodb_json_loads
-
+    
     django.setup()
 
-    client_dynamodb = boto3.client("dynamodb")
-    response = client_dynamodb.get_item(
-        TableName=os.environ["NUCLEONI_PROVISIONING_TABLE_NAME"],
-        Key=dynamodb_json_dumps({"customer_id": os.environ.get('CUSTOMER_ID')}),
+    customer_provisioning_db: CustomerProvisioningDb = ProvisioningCrud.get_customer_provisioning_impl(
+        customer_id=customer_id,
     )
 
-    customer_dict = dynamodb_json_loads(response["Item"])
-
     if os.environ.get("PROVISIONING_DATABASE_OPERATION") == "MIGRATE_DATABASE":
-        logger.info("Migrating database...")
+        logger.info(f"Migrating database...{customer_provisioning_db.database_name}")
         client_databases = {
             settings.DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
-                default=f"postgres://{customer_dict['database_user']}:{customer_dict['database_password']}@{customer_dict['database_host']}:5432/{customer_dict['database_name']}",
+                default=f"postgres://{customer_provisioning_db.database_user}:{customer_provisioning_db.database_password}@{customer_provisioning_db.database_host}:5432/{customer_provisioning_db.database_name}",
                 conn_max_age=settings.DB_CONN_MAX_AGE,
             ),
             settings.DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
-                default=f"postgres://{customer_dict['database_user']}:{customer_dict['database_password']}@{customer_dict['database_host']}:5432/{customer_dict['database_name']}",
+                default=f"postgres://{customer_provisioning_db.database_user}:{customer_provisioning_db.database_password}@{customer_provisioning_db.database_host}:5432/{customer_provisioning_db.database_name}",
                 conn_max_age=settings.DB_CONN_MAX_AGE,
             ),
         }
@@ -70,12 +69,17 @@ def system_handler():
                 settings.DATABASE_CONNECTION_REPLICA_NAME
             ]
         management.call_command("migrate", "--noinput")
-        logger.info("Database migrated")
+        logger.info(f"Database migrated: {customer_provisioning_db.database_name}")
+
+        customer_provisioning_db.database_migrated = True
+        ProvisioningCrud.update_customer_provisioning_impl(
+            customer_provisioning_db=customer_provisioning_db,
+        )
 
         step_function_client = boto3.client("stepfunctions")
         step_function_client.send_task_success(
             taskToken=os.environ.get("SETUP_DATABASE_STEP_TASK_TOKEN"),
-            output="Database migrated.",
+            output=f"Database migrated: {customer_provisioning_db.database_name}",
         )
 
     return {
