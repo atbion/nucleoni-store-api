@@ -33,7 +33,7 @@ def system_handler():
     from saleor import settings
     import dj_database_url
     import boto3
-    
+
     django.setup()
 
     customer_provisioning_db: CustomerProvisioningDb = ProvisioningCrud.get_customer_provisioning_impl(
