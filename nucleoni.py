@@ -28,13 +28,17 @@ def system_handler():
         f"SYSTEM HANDLER SETUP_DATABASE_STEP_TASK_TOKEN: {os.environ.get('SETUP_DATABASE_STEP_TASK_TOKEN')}")
     os.environ["DJANGO_SETTINGS_MODULE"] = "saleor.settings"
     import django
+    from django.core.management import execute_from_command_line
     from django.core import management
     from django.db import connections
+    from django import db
     from saleor import settings
     import dj_database_url
     import boto3
 
     django.setup()
+
+    connections.close_all()
 
     customer_provisioning_db: CustomerProvisioningDb = ProvisioningCrud.get_customer_provisioning_impl(
         customer_id=customer_id,
@@ -68,7 +72,8 @@ def system_handler():
             client_databases[
                 settings.DATABASE_CONNECTION_REPLICA_NAME
             ]
-        management.call_command("migrate", "--noinput")
+
+        execute_from_command_line(["migrate", "--noinput"])
         logger.info(f"Database migrated: {customer_provisioning_db.database_name}")
 
         customer_provisioning_db.is_database_provisioned = True
