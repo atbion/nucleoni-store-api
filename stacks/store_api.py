@@ -73,6 +73,7 @@ class StoreApiStack(Stack):
             aws_iam.PolicyStatement(
                 actions=[
                     "ssm:*",
+                    "dynamodb:*",
                 ],
                 resources=[
                     "*",
