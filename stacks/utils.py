@@ -21,6 +21,7 @@ class UtilsService:
         is_production: bool,
         store_api_storage_bucket: str,
         aurora_endpoint: str,
+        nucleoni_provisioning_table_name: str,
     ):
         return {
             "STAGE": stage,
@@ -32,6 +33,7 @@ class UtilsService:
             "AURORA_ENDPOINT": aurora_endpoint,
             "AWS_STATIC_CUSTOM_DOMAIN": store_api_storage_bucket,
             "AWS_STORAGE_BUCKET_NAME": store_api_storage_bucket,
+            "NUCLEONI_PROVISIONING_TABLE_NAME": nucleoni_provisioning_table_name,
         }
 
     @staticmethod
