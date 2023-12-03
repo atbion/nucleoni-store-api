@@ -71,7 +71,7 @@ def system_handler():
                 settings.DATABASE_CONNECTION_REPLICA_NAME
             ]
 
-        management.call_command("migrate", noinput=True)
+        management.call_command("migrate", no_input=True)
         logger.info(f"Database migrated: {customer_provisioning_db.database_name}")
 
         customer_provisioning_db.is_database_provisioned = True
