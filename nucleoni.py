@@ -54,7 +54,9 @@ def system_handler():
         step_function_client = boto3.client("stepfunctions")
         step_function_client.send_task_success(
             taskToken=os.environ.get("SETUP_DATABASE_STEP_TASK_TOKEN"),
-            output=f"Database migrated: {customer_provisioning_db.database_name}",
+            output={
+                "status": f"Database migrated: {customer_provisioning_db.database_name}",
+            },
         )
 
     return {
