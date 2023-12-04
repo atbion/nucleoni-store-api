@@ -113,6 +113,11 @@ class StoreApiStack(Stack):
                     self,
                     f"/infra/rds_endpoint/cluster-1",
                 ),
+                aurora_password=aws_ssm.StringParameter.value_from_lookup(
+                    self,
+                    f"/infra/rds_password/cluster-1",
+                ),
+                aurora_username="nucleoni",
                 nucleoni_provisioning_table_name=aws_ssm.StringParameter.value_from_lookup(
                     self,
                     f"/infra/nucleoni-provisioning-table-name/{self.stage}",

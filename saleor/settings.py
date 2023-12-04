@@ -101,33 +101,19 @@ DATABASE_CONNECTION_DEFAULT_NAME = "default"
 DATABASE_CONNECTION_REPLICA_NAME = "replica"
 
 
-def decrypt_ssm_parameter(parameter_encrypted: str, region: str = "eu-west-1"):
-    session = boto3.Session()
-    ssm_client = session.client("ssm", region_name=region)
-    response = ssm_client.get_parameter(
-        Name=parameter_encrypted, WithDecryption=True
-    )
-    value = response["Parameter"]["Value"]
-    return value
-
-
 stage = os.environ.get("STAGE", "dev")
-user = "nucleoni"
-password = decrypt_ssm_parameter(
-    parameter_encrypted=os.environ.get("AURORA_PASSWORD_SSM_PARAMETER")
-) if os.environ.get("AURORA_PASSWORD_SSM_PARAMETER") else ""
-host = os.environ.get("AURORA_ENDPOINT")
+aurora_endpoint = os.environ.get("AURORA_ENDPOINT")
+aurora_password = os.environ.get("AURORA_PASSWORD")
+aurora_username = os.environ.get("AURORA_USERNAME")
+
 db = f"nucleoni-store-api-{stage}"
 DATABASES = {
     DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
-        default=f"postgres://{user}:{password}@{host}:5432/{db}",
+        default=f"postgres://{aurora_username}:{aurora_password}@{aurora_endpoint}:5432/{db}",
         conn_max_age=DB_CONN_MAX_AGE,
     ),
     DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
-        default=f"postgres://{user}:{password}@{host}:5432/{db}",
-        # TODO: We need to add read only user to saleor platform,
-        # and we need to update docs.
-        # default="postgres://saleor_read_only:saleor@localhost:5432/saleor",
+        default=f"postgres://{aurora_username}:{aurora_password}@{aurora_endpoint}:5432/{db}",
         conn_max_age=DB_CONN_MAX_AGE,
     ),
 }

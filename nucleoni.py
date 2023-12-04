@@ -30,8 +30,6 @@ def system_handler():
     import django
     from django.core import management
     from django.db import connections
-    from saleor import settings
-    import dj_database_url
     import boto3
 
     django.setup()
@@ -44,32 +42,6 @@ def system_handler():
 
     if os.environ.get("PROVISIONING_DATABASE_OPERATION") == "MIGRATE_DATABASE":
         logger.info(f"Migrating database...{customer_provisioning_db.database_name}")
-        client_databases = {
-            settings.DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
-                default=f"postgres://{customer_provisioning_db.database_user}:{customer_provisioning_db.database_password}@{customer_provisioning_db.database_host}:5432/{customer_provisioning_db.database_name}",
-                conn_max_age=settings.DB_CONN_MAX_AGE,
-            ),
-            settings.DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
-                default=f"postgres://{customer_provisioning_db.database_user}:{customer_provisioning_db.database_password}@{customer_provisioning_db.database_host}:5432/{customer_provisioning_db.database_name}",
-                conn_max_age=settings.DB_CONN_MAX_AGE,
-            ),
-        }
-        settings.DATABASES[settings.DATABASE_CONNECTION_DEFAULT_NAME] = \
-            client_databases[
-                settings.DATABASE_CONNECTION_DEFAULT_NAME
-            ]
-        settings.DATABASES[settings.DATABASE_CONNECTION_REPLICA_NAME] = \
-            client_databases[
-                settings.DATABASE_CONNECTION_REPLICA_NAME
-            ]
-        connections.databases[settings.DATABASE_CONNECTION_DEFAULT_NAME] = \
-            client_databases[
-                settings.DATABASE_CONNECTION_DEFAULT_NAME
-            ]
-        connections.databases[settings.DATABASE_CONNECTION_REPLICA_NAME] = \
-            client_databases[
-                settings.DATABASE_CONNECTION_REPLICA_NAME
-            ]
 
         management.call_command("migrate", no_input=True)
         logger.info(f"Database migrated: {customer_provisioning_db.database_name}")
