@@ -100,20 +100,19 @@ DATABASE_CONNECTION_DEFAULT_NAME = "default"
 # This variable should be set to `replica`
 DATABASE_CONNECTION_REPLICA_NAME = "replica"
 
-
 stage = os.environ.get("STAGE", "dev")
 aurora_endpoint = os.environ.get("AURORA_ENDPOINT")
 aurora_password = os.environ.get("AURORA_PASSWORD")
 aurora_username = os.environ.get("AURORA_USERNAME")
+aurora_database_name = os.environ.get("AURORA_DATABASE_NAME")
 
-db = f"nucleoni-store-api-{stage}"
 DATABASES = {
     DATABASE_CONNECTION_DEFAULT_NAME: dj_database_url.config(
-        default=f"postgres://{aurora_username}:{aurora_password}@{aurora_endpoint}:5432/{db}",
+        default=f"postgres://{aurora_username}:{aurora_password}@{aurora_endpoint}:5432/{aurora_database_name}",
         conn_max_age=DB_CONN_MAX_AGE,
     ),
     DATABASE_CONNECTION_REPLICA_NAME: dj_database_url.config(
-        default=f"postgres://{aurora_username}:{aurora_password}@{aurora_endpoint}:5432/{db}",
+        default=f"postgres://{aurora_username}:{aurora_password}@{aurora_endpoint}:5432/{aurora_database_name}",
         conn_max_age=DB_CONN_MAX_AGE,
     ),
 }
